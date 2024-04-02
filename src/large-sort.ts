@@ -494,7 +494,13 @@ export async function mergeSortedStreams<TValue>(
             bufferStringSize += dataStr.length;
             if(bufferStringSize > maxStringLength) {
                 writeBuffer.push('')
-                let bufferStr = writeBuffer.join(outputDelimeter) + outputDelimeter;
+                let bufferStr = writeBuffer.join(outputDelimeter);
+
+                // Add a delimeter if there isn't already one
+                if (!bufferStr.endsWith(outputDelimeter)){
+                    bufferStr += outputDelimeter;
+                }
+
                 writeBuffer = [];
                 bufferStringSize = dataStr.length;
                 await previousPromise;
@@ -534,7 +540,13 @@ export async function mergeSortedStreams<TValue>(
 
         bufferStringSize += lastMergeInfoDataOutput.length;
         if(bufferStringSize > maxStringLength) {
-            const toWrite = writeBuffer.join(outputDelimeter) + outputDelimeter;
+            let toWrite = writeBuffer.join(outputDelimeter);
+
+            // Add a delimeter if there isn't already one
+            if (!toWrite.endsWith(outputDelimeter)){
+                toWrite += outputDelimeter;
+            }
+
             await previousPromise;
             previousPromise = new Promise<void>((resolve) => resultStream.write(toWrite, () => resolve()));
             bufferStringSize = lastMergeInfoDataOutput.length;
@@ -547,7 +559,13 @@ export async function mergeSortedStreams<TValue>(
             bufferStringSize += output.length;
             if(bufferStringSize > maxStringLength) {
                 // Flush buffer
-                const toWrite = writeBuffer.join(outputDelimeter) + outputDelimeter;
+                let toWrite = writeBuffer.join(outputDelimeter);
+                
+                // Add a delimeter if there isn't already one
+                if (!toWrite.endsWith(outputDelimeter)){
+                    toWrite += outputDelimeter;
+                }
+                
                 await previousPromise;
                 previousPromise = new Promise<void>((resolve) => resultStream.write(toWrite, () => resolve()));
                 bufferStringSize = output.length;
