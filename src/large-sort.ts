@@ -578,7 +578,13 @@ export async function mergeSortedStreams<TValue>(
         lastMergeInfo.reader.close();
 
         // Flushing the last buffer
-        const toWrite = writeBuffer.join(outputDelimeter) + outputDelimeter
+        let toWrite = writeBuffer.join(outputDelimeter);
+
+        // Add a delimeter if there isn't already one
+        if (!toWrite.endsWith(outputDelimeter)){
+            toWrite += outputDelimeter;
+        }
+
         // Wait for the previous promise
         await previousPromise;
         await new Promise<void>((resolve) => resultStream.write(toWrite, () => resolve()));
